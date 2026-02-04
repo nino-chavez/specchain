@@ -1,0 +1,19 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Temp files
+*.tmp
+*.temp
+
+# When installed in a project, these may contain project-specific data
+# but the templates should be tracked
+# specchain/specs/*/implementation/
+# specchain/specs/*/verification/
