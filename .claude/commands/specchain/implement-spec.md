@@ -3,10 +3,11 @@
 Now that we have a spec and tasks list ready for implementation, we will proceed with implementation of this spec by following this multi-phase process:
 
 PHASE 0: Load session state and context
-PHASE 1: Plan the subagent assignments for each task group
-PHASE 2: Delegate implementation of each task group to its assigned subagent
-PHASE 3: Delegate verifications of the implementation to verifier subagents
-PHASE 4: Delegate the production of the final verification
+PHASE 0.5: Resolve execution profile
+PHASE 1: Plan the subagent assignments for each task group (squad only)
+PHASE 2: Delegate implementation of each task group
+PHASE 3: Delegate verifications to verifier subagents (squad + standard/thorough only)
+PHASE 4: Produce the final verification report
 PHASE 5: Update session state
 
 Follow each of these phases and their individual workflows IN SEQUENCE:
@@ -14,8 +15,14 @@ Follow each of these phases and their individual workflows IN SEQUENCE:
 ## Command Flags
 
 This command supports the following optional flags:
-- `--fresh-agent` - Force spawning a fresh agent for the next task group (useful for context management)
-- `--context-report` - Display context summary before proceeding with implementation
+
+**Execution profile overrides:**
+- `--solo` | `--squad` — Strategy override
+- `--lean` | `--standard` | `--thorough` — Depth override
+
+**Context management:**
+- `--fresh-agent` — Force spawning a fresh agent for the next task group
+- `--context-report` — Display context summary before proceeding with implementation
 
 ## Multi-Phase Process
 
@@ -38,7 +45,51 @@ Store the current spec folder path for later STATE.md updates.
 
 ---
 
-### PHASE 1: Plan subagents assignments
+### PHASE 0.5: Resolve Execution Profile
+
+1. **Read persisted profile**: Load `specchain/specs/[this-spec]/planning/execution-profile.yml`
+2. **Apply command flag overrides**: If `--solo`, `--squad`, `--lean`, `--standard`, or `--thorough` flags were provided, they override the persisted values.
+3. **If no profile exists and no flags**: Read defaults from `specchain/config.yml` under the `execution` section.
+
+#### Auto-Suggest (when `auto_suggest: true` AND no explicit strategy/depth flags provided)
+
+If `specchain/config.yml` has `execution.auto_suggest: true` and no explicit flags were passed:
+
+1. **Analyze the spec**: Read `specchain/specs/[this-spec]/tasks.md` and evaluate:
+   - Total number of tasks
+   - Number of distinct domains touched (database, API, frontend, etc.)
+   - Complexity indicators (number of task groups, cross-cutting concerns)
+
+2. **Apply suggestion rules**:
+   - Tasks <= 8 AND single domain -> suggest `solo`
+   - Tasks > 20 -> suggest `thorough`
+   - Spec touches >= 2 domains -> suggest `squad`
+   - Infrastructure/config only tasks -> suggest `solo` + `lean`
+
+3. **Present recommendation to user**:
+   ```
+   Spec Analysis: [N] tasks, [domains description].
+   Recommended: [strategy] + [depth]
+   Reason: [rationale based on rules above]
+
+   Accept? Or override with flags (e.g., --squad --standard)
+   ```
+
+4. **Wait for user confirmation or override.** Never silently decide.
+
+5. **Store resolved strategy + depth** for all subsequent phases.
+
+If a flag override changed the profile, update `planning/execution-profile.yml` with the new values and set `set_by: implement-spec`.
+
+---
+
+### PHASE 1: Plan subagent assignments
+
+**This phase is conditional on strategy:**
+
+#### If strategy is `solo`: **SKIP Phase 1 entirely.** No agent assignment needed — the orchestrator handles all task groups directly.
+
+#### If strategy is `squad`: Current behavior.
 
 Read the following files:
 - `specchain/specs/[this-spec]/tasks.md`
@@ -61,9 +112,22 @@ Ensure each assigned subagent exists in both of these locations:
 - In implementers.yml there must be an implementer with this role ID.
 - In `.claude/agents/specchain` there must be a file named by this implementer ID.
 
-### PHASE 2: Delegate task groups implementations to assigned subagents
+---
 
-Loop through each task group in `specchain/specs/[this-spec]/tasks.md` and delegate its implementation to the assigned subagent specified in `task-assignments.yml`.
+### PHASE 2: Delegate task group implementations
+
+Loop through each task group in `specchain/specs/[this-spec]/tasks.md` and delegate its implementation.
+
+#### Strategy: `solo`
+
+Delegate ALL task groups to the orchestrator (self). Process task groups **sequentially**. For each task group, include:
+- The full spec file: `specchain/specs/[this-spec]/spec.md`
+- STATE.md context (blockers, decisions, patterns)
+- The task group with all its sub-tasks
+
+#### Strategy: `squad`
+
+Current behavior — delegate each task group to its assigned specialist subagent from `task-assignments.yml`.
 
 For each delegation, provide the subagent with:
 - The task group (including the parent task and all sub-tasks)
@@ -79,10 +143,31 @@ For each delegation, provide the subagent with:
   4. Report any new blockers discovered during implementation
   5. Report any new patterns established during implementation
 
-#### Context Advisory
+#### Depth modifier: `thorough` (applies to both strategies)
+
+Prepend the following **TDD instruction block** to each task group delegation:
+
+> "For each sub-task in this task group, follow the TDD Red-Green-Refactor cycle:
+> 1. **RED** — Write a failing test that defines the expected behavior
+> 2. **GREEN** — Write the minimum code necessary to make the test pass
+> 3. **REFACTOR** — Clean up the code while keeping all tests green
+>
+> After completing each sub-task, verify tests pass before proceeding to the next."
+
+**Phase checkpoints (thorough only):** After completing each task group, pause and present a verification prompt to the user:
+```
+Task Group [N]: [Title] — Complete.
+[Brief summary of what was implemented]
+
+Verify and confirm before proceeding to Task Group [N+1]? (y/continue/override)
+```
+Wait for user confirmation before proceeding to the next task group.
+
+#### Context Management
 
 After completing each task group, track the count of completed task groups in this session.
 
+**`lean` and `standard` depths:**
 When the configured `warn_after_task_groups` threshold is reached (default: 3), display:
 ```
 Context Advisory: [N] task groups completed in this session.
@@ -90,7 +175,11 @@ Consider using fresh agents for remaining tasks.
 Use --fresh-agent flag to spawn a fresh agent for the next task group.
 ```
 
-If `--fresh-agent` flag is active OR if running in `thorough` mode:
+**`thorough` + `squad`:** Force a **fresh agent for every task group** (not just after threshold).
+
+**`thorough` + `solo`:** Force a fresh agent at **phase boundaries only** (not per group — preserves solo identity). Phase boundaries are between major implementation milestones (e.g., after all data model tasks, before API tasks).
+
+If `--fresh-agent` flag is active OR if fresh agent is required by depth rules:
 - Spawn a fresh agent for the next task group
 - Provide the fresh agent with:
   - STATE.md content (session context, decisions, blockers)
@@ -98,7 +187,17 @@ If `--fresh-agent` flag is active OR if running in `thorough` mode:
   - Path to spec.md
   - List of completed task groups (names only, not implementation details)
 
-### PHASE 3: Delegate verifications of implementation to verifier subagents
+---
+
+### PHASE 3: Delegate verifications to verifier subagents
+
+**This phase is conditional on strategy and depth:**
+
+#### If strategy is `solo` (any depth): **SKIP Phase 3 entirely.** No domain verifiers for single-agent work.
+
+#### If strategy is `squad` + depth is `lean`: **SKIP Phase 3 entirely.**
+
+#### If strategy is `squad` + depth is `standard` or `thorough`: Run verifiers (current behavior).
 
 1. Collect the list of subagent IDs that were delegated to in Phase 2.
 
@@ -117,15 +216,23 @@ If `--fresh-agent` flag is active OR if running in `thorough` mode:
      3. Verify whether `specchain/specs/[this-spec]/tasks.md` has been updated to reflect these tasks' completeness.
      4. Document your verification report and place this document in: `specchain/specs/[this-spec]/verification/`
 
+---
+
 ### PHASE 4: Produce the final verification report
+
+**The scope of verification depends on depth:**
 
 Use the **implementation-verifier** subagent to do its implementation verification and produce its final verification report.
 
 Provide to the subagent the following:
 - The path to this spec: `specchain/specs/[this-spec]`
+- **The resolved depth** (lean, standard, or thorough)
+
 Instruct the subagent to do the following:
-  1. Run all of its final verifications according to its built-in workflow
-  2. Produce the final verification report in `specchain/specs/[this-spec]/verifications/final-verification.md`.
+  1. Run all of its final verifications according to its built-in workflow (depth-aware)
+  2. Produce the final verification report in `specchain/specs/[this-spec]/verification/final-verification.md`.
+
+---
 
 ### PHASE 5: Update session state
 
@@ -150,11 +257,15 @@ Update `specchain/STATE.md` to reflect the completed implementation session:
    - Move any resolved blockers from Active to Resolved Blockers table
    - Add any new blockers discovered during implementation to Active Blockers
 
-6. **Add Patterns Established**: If any new patterns were discovered or established during implementation, add them to the Patterns Established section
+6. **Add Execution Profile entry**: Add a row to the **Execution Profiles** table:
+   | [Spec name] | [strategy] | [depth] | [today's date] |
 
-7. **Add Session Log Entry**: Add a new entry with:
+7. **Add Patterns Established**: If any new patterns were discovered or established during implementation, add them to the Patterns Established section
+
+8. **Add Session Log Entry**: Add a new entry with:
    - Current date and session number
    - Summary of what was done (task groups completed, verifications run)
+   - Execution profile used (strategy + depth)
    - Next steps for future sessions
 
 **Pruning**: If any section exceeds the configured limits in `config.yml`:
