@@ -36,6 +36,12 @@ your-project/
 ├── specchain/
 │   ├── config.yml              # Execution & workflow configuration
 │   ├── STATE.md                # Session memory (auto-updated)
+│   ├── docs/
+│   │   └── execution-profiles.md  # Detailed execution profile reference
+│   ├── governance/
+│   │   ├── principles.md       # Core governance principles
+│   │   ├── claude-md.tmpl      # CLAUDE.md template
+│   │   └── cursorrules.tmpl    # .cursorrules template
 │   ├── product/
 │   │   └── roadmap.md          # Product roadmap
 │   ├── roles/
@@ -186,11 +192,14 @@ execution:
 
 state_tracking:
   enabled: true
+  auto_update: true
   max_decisions: 20
+  max_resolved_blockers: 10
   max_session_logs: 10
 
 context_management:
   enabled: true
+  advisory_mode: true
   warn_after_task_groups: 3
   fresh_agent_for_depths:
     - thorough
@@ -316,6 +325,56 @@ You are a custom agent...
 ```
 
 Register in `specchain/roles/implementers.yml`.
+
+## Governance Templates
+
+SpecChain includes starter templates for project governance files, distilled from the Aegis Constitutional AI Governance Framework.
+
+### What's Included
+
+| File | Purpose |
+|------|---------|
+| `specchain/governance/principles.md` | Core governance principles (scope minimization, behavioral contracts, traceability, boundary validation, graceful degradation, observability) |
+| `specchain/governance/claude-md.tmpl` | CLAUDE.md template with `{{PLACEHOLDER}}` markers |
+| `specchain/governance/cursorrules.tmpl` | .cursorrules YAML template with `{{PLACEHOLDER}}` markers |
+
+### Setup Generation
+
+During `./setup.sh`, you'll be prompted to generate `CLAUDE.md` and `.cursorrules` at your project root. The script substitutes your project name, description, language, and framework into the templates.
+
+If you skip generation, the raw templates remain at `specchain/governance/` for manual use.
+
+### Manual Regeneration
+
+To regenerate files after setup, substitute placeholders manually:
+
+```bash
+# Regenerate CLAUDE.md
+sed -e 's|{{PROJECT_NAME}}|My Project|g' \
+    -e 's|{{PROJECT_DESCRIPTION}}|What it does|g' \
+    -e 's|{{LANGUAGE}}|TypeScript|g' \
+    -e 's|{{FRAMEWORK}}|Next.js|g' \
+    -e 's|{{CMD_INSTALL}}|npm install|g' \
+    -e 's|{{CMD_DEV}}|npm run dev|g' \
+    -e 's|{{CMD_BUILD}}|npm run build|g' \
+    -e 's|{{CMD_TEST}}|npm test|g' \
+    -e 's|{{CMD_TYPECHECK}}|npx tsc --noEmit|g' \
+    specchain/governance/claude-md.tmpl > CLAUDE.md
+
+# Regenerate .cursorrules
+sed -e 's|{{PROJECT_NAME}}|My Project|g' \
+    -e 's|{{PROJECT_DESCRIPTION}}|What it does|g' \
+    -e 's|{{LANGUAGE}}|TypeScript|g' \
+    -e 's|{{FRAMEWORK}}|Next.js|g' \
+    -e 's|{{CMD_INSTALL}}|npm install|g' \
+    -e 's|{{CMD_DEV}}|npm run dev|g' \
+    -e 's|{{CMD_BUILD}}|npm run build|g' \
+    -e 's|{{CMD_TEST}}|npm test|g' \
+    -e "s|{{DATE}}|$(date +%Y-%m-%d)|g" \
+    specchain/governance/cursorrules.tmpl > .cursorrules
+```
+
+Then edit the generated files to fill in project-specific sections (domain terminology, architectural decisions, key directories).
 
 ## License
 
