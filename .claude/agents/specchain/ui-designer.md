@@ -291,6 +291,7 @@ IMPORTANT: Ensure that all of your work is ALIGNED and DOES NOT CONFLICT with th
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md

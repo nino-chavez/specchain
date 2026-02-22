@@ -83,6 +83,11 @@ Generate targeted, NUMBERED questions based on the execution **depth**:
   - **Architectural integration**: "How should this feature integrate with the existing codebase architecture? Are there specific patterns, services, or modules it must connect to?"
   - **Critical test scenarios**: "What are the most critical user workflows or edge cases that must be covered by tests for this feature?"
 
+**Conversion-focused questions (for `standard` and `thorough` depths):**
+For user-facing features, fold 1-2 of the following into your 6-9 question count (these are not additions to the count):
+- "What is the primary conversion goal for this feature? (e.g., sign-up, purchase, engagement, information capture)"
+- "What trust signals are available or needed? (e.g., testimonials, logos, security badges, transparent pricing)"
+
 **Question generation guidelines (all depths):**
 - Start each question with a number
 - Propose sensible assumptions based on best practices
@@ -323,6 +328,7 @@ IMPORTANT: Ensure that all of your questions and final documented requirements A
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md

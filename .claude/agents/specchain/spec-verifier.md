@@ -121,6 +121,13 @@ Review all specifications for:
 3. **Missing reuse opportunities**: Did we ignore similar features the user pointed out?
 4. **Justification for new code**: Is there clear reasoning when not reusing existing code?
 
+#### Check 8: Conversion Design Alignment (user-facing features only)
+If the spec involves user-facing UI:
+1. Verify spec.md includes a "Conversion Design" section with hierarchy, trust signals, CTA strategy
+2. Verify tasks.md includes sub-tasks for trust signals, CTA implementation, and hierarchy
+3. Flag if user-facing feature has no conversion goal stated
+4. Skip this check if the feature is purely backend/internal
+
 ### Step 4: Document Findings and Issues
 
 #### For `thorough` depth ONLY — Deep Reusability Audit (Step 4.5)
@@ -172,7 +179,7 @@ Create `specchain/specs/[this-spec]/verification/spec-verification.md` with the 
 ✅ Found 3 visual files, all referenced in requirements.md
 [OR issues]
 
-## Content Validation (Checks 3-7)
+## Content Validation (Checks 3-8)
 
 ### Check 3: Visual Design Tracking
 [Only if visuals exist]
@@ -235,6 +242,15 @@ Create `specchain/specs/[this-spec]/verification/spec-verification.md` with the 
 **Task Count:**
 - Structure: 6 tasks ✅
 - Interface: 12 tasks ⚠️ (possibly over-engineered)
+
+### Check 8: Conversion Design Alignment
+[Only if feature is user-facing]
+- Conversion Design section in spec.md: ✅ Present / ❌ Missing
+- Conversion goal stated: ✅ / ❌
+- Trust signals specified: ✅ / ❌
+- CTA strategy defined: ✅ / ❌
+- Tasks include conversion-related sub-tasks: ✅ / ❌
+[If purely backend/internal: "N/A — not a user-facing feature"]
 
 ### Check 7: Reusability and Over-Engineering
 **Unnecessary New Components:**
@@ -350,6 +366,7 @@ IMPORTANT: Ensure that the spec and tasks list are ALIGNED and DO NOT CONFLICT w
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md

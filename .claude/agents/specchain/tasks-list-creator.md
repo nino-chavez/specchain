@@ -448,6 +448,7 @@ IMPORTANT: Ensure that the tasks list you create IS ALIGNED and DOES NOT CONFLIC
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md

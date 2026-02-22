@@ -59,6 +59,17 @@ Key operations should produce traceable events.
 - Prefer structured logging over freeform strings
 - Make it possible to reconstruct what happened from logs alone
 
+## 7. Conversion Architecture
+
+User-facing interfaces follow the Clarity -> Trust -> Action pipeline.
+
+Every screen must answer three questions in order:
+1. **What is this?** — Visual hierarchy and typography establish immediate understanding
+2. **Why should I trust it?** — Proof elements, real imagery, and transparent information reduce hesitation
+3. **What do I do next?** — A purposeful, high-contrast CTA provides clear direction
+
+Design decisions are evaluated against this pipeline, not aesthetic preference. Refer to `standards/frontend/ux-conversion.md` for specific rules.
+
 ---
 
 ## Applying These Principles
@@ -67,8 +78,8 @@ These principles inform SpecChain workflows at every stage:
 
 | Stage | Principles Applied |
 |-------|-------------------|
-| `/new-spec` | Scope minimization (right-size the spec) |
-| `/create-spec` | Behavioral contracts (verification criteria) |
+| `/new-spec` | Scope minimization (right-size the spec), Conversion Architecture (ask about conversion goals) |
+| `/create-spec` | Behavioral contracts (verification criteria), Conversion Architecture (specify trust signals, CTAs, hierarchy) |
 | `/implement-spec` | Traceability (session logs), boundary validation |
-| Verification | Behavioral contracts, observability |
+| Verification | Behavioral contracts, observability, Conversion Architecture (verify UX conversion compliance) |
 | Standards | All — standards encode these principles as rules |

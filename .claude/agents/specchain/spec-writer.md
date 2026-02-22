@@ -90,6 +90,15 @@ Follow this structure exactly when creating the content of `spec.md`:
 - Key UI elements to implement
 - Responsive breakpoints required
 
+## Conversion Design
+[If feature is user-facing]
+- Primary conversion goal: [what action users should take]
+- Hierarchy: [H1 value prop, supporting subhead, primary CTA]
+- Trust signals: [testimonials, logos, security indicators, etc.]
+- Friction points: [forms, multi-step flows — how minimized]
+- CTA strategy: [copy, placement, color treatment per 60-30-10]
+[If feature is not user-facing: "N/A — internal/backend feature"]
+
 ## Reusable Components
 ### Existing Code to Leverage
 - Components: [List found components]
@@ -138,6 +147,7 @@ IMPORTANT: Ensure that the spec you create IS ALIGNED and DOES NOT CONFLICT with
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md

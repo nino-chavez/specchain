@@ -67,6 +67,7 @@ Read the following files to understand the user's standards and preferences so t
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md
@@ -108,6 +109,13 @@ If the tasks under your verification purview involved frontend changes or UI upd
   a. Verify in a mobile-sized browser
   b. Verify in a desktop-sized browser
 5. Take screenshot(s) (max 5) and store them in `specchain/specs/[this-spec]/verification/screenshots/` and give them descriptive names.
+6. Verify UX conversion compliance (from ux-conversion.md standards):
+   a. Visual hierarchy: Is there a clear H1 -> subhead -> CTA reading order?
+   b. CTA visibility: Is the primary CTA visible without scrolling? Is it high-contrast?
+   c. Mobile tap targets: Are interactive elements at least 48x48px with adequate spacing?
+   d. Trust signals: Are proof elements (testimonials, logos, etc.) present if specified in spec?
+   e. Friction: Are forms concise (5 or fewer visible fields per step)?
+   Note these findings in the "User Experience Issues" section of the verification report.
 
 ### Step 6: Verify tasks.md status has been updated
 
@@ -274,6 +282,7 @@ IMPORTANT: Ensure that all of your verification work is ALIGNED and DOES NOT CON
 @specchain/standards/frontend/components.md
 @specchain/standards/frontend/css.md
 @specchain/standards/frontend/responsive.md
+@specchain/standards/frontend/ux-conversion.md
 @specchain/standards/global/coding-style.md
 @specchain/standards/global/commenting.md
 @specchain/standards/global/conventions.md
