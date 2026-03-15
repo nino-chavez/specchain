@@ -228,6 +228,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
         echo "Generating .cursorrules..."
         envsubst < "$TARGET_DIR/specchain/governance/cursorrules.tmpl" > "$TARGET_DIR/.cursorrules"
+
+        echo "Generating .windsurfrules..."
+        envsubst < "$TARGET_DIR/specchain/governance/windsurfrules.tmpl" > "$TARGET_DIR/.windsurfrules"
     else
         echo -e "${YELLOW}Note: envsubst not found, using escaped sed fallback${NC}"
         # Escape sed special characters in user inputs
@@ -257,13 +260,26 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
             -e "s|\${GOV_CMD_TYPECHECK}|$(escape_sed "$GOV_CMD_TYPECHECK")|g" \
             -e "s|\${GOV_DATE}|$(escape_sed "$GOV_DATE")|g" \
             "$TARGET_DIR/specchain/governance/cursorrules.tmpl" > "$TARGET_DIR/.cursorrules"
+
+        echo "Generating .windsurfrules..."
+        sed -e "s|\${GOV_PROJECT_NAME}|$(escape_sed "$GOV_PROJECT_NAME")|g" \
+            -e "s|\${GOV_DESCRIPTION}|$(escape_sed "$GOV_DESCRIPTION")|g" \
+            -e "s|\${GOV_LANGUAGE}|$(escape_sed "$GOV_LANGUAGE")|g" \
+            -e "s|\${GOV_FRAMEWORK}|$(escape_sed "$GOV_FRAMEWORK")|g" \
+            -e "s|\${GOV_CMD_INSTALL}|$(escape_sed "$GOV_CMD_INSTALL")|g" \
+            -e "s|\${GOV_CMD_DEV}|$(escape_sed "$GOV_CMD_DEV")|g" \
+            -e "s|\${GOV_CMD_BUILD}|$(escape_sed "$GOV_CMD_BUILD")|g" \
+            -e "s|\${GOV_CMD_TEST}|$(escape_sed "$GOV_CMD_TEST")|g" \
+            -e "s|\${GOV_CMD_TYPECHECK}|$(escape_sed "$GOV_CMD_TYPECHECK")|g" \
+            "$TARGET_DIR/specchain/governance/windsurfrules.tmpl" > "$TARGET_DIR/.windsurfrules"
     fi
 
-    echo -e "${GREEN}Generated CLAUDE.md and .cursorrules${NC}"
+    echo -e "${GREEN}Generated CLAUDE.md, .cursorrules, and .windsurfrules${NC}"
 else
     echo -e "Skipped. Raw templates available at:"
     echo "  ${YELLOW}specchain/governance/claude-md.tmpl${NC}"
     echo "  ${YELLOW}specchain/governance/cursorrules.tmpl${NC}"
+    echo "  ${YELLOW}specchain/governance/windsurfrules.tmpl${NC}"
 fi
 
 # --- Generate manifest (F15) ---

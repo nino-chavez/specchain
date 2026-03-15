@@ -1,57 +1,109 @@
 # Specchain
 
-A spec-driven development workflow system for AI-assisted coding. Specchain provides structured specifications, task management, and verification workflows for Claude Code projects.
+A spec-driven development workflow for AI-assisted coding. Define features as specifications, then let structured agents implement and verify them — with crash recovery, remediation loops, and full traceability.
 
 ## Features
 
-- **Spec-driven development** - Define features as specifications before implementation
-- **Configurable execution profiles** - Choose who does the work (solo/squad) and how deep (lean/standard/thorough)
-- **Task breakdown** - Automatic task grouping with specialist agent assignments (squad) or feature-slice grouping (solo)
-- **Verification steps** - Concrete verification criteria for each task group, scaled by depth
-- **Session memory** - STATE.md maintains context between sessions
-- **Context advisory** - Warns when context accumulates, suggests fresh agents
-- **Auto-suggest** - Analyzes spec complexity and recommends an execution profile
+- **Unified `/spec` command** — chains initialization, spec creation, and implementation with confirmation gates
+- **Execution profiles** — solo/squad strategy x lean/standard/thorough depth (6 combos)
+- **Structured state directory** — 6 YAML files replace monolithic STATE.md
+- **Crash recovery** — `progress.yml` tracks per-group completion; resume with `--resume-from`
+- **Remediation loop** — verifier issues route back to implementers (Phase 3.5, capped at 1 cycle)
+- **Mandatory context splitting** — solo strategy auto-splits at threshold, not just advisory
+- **Conflict detection** — warns when concurrent specs touch the same domain
+- **Weighted auto-suggest** — complexity scoring: subtasks x1 + domains x3 + cross-cutting x5
+- **Bidirectional traceability** — structured YAML frontmatter in all reports; implementers add spec/task comments in code
+- **Multi-editor support** — CLAUDE.md, .cursorrules, and .windsurfrules templates
+- **Tech stack presets** — generic, typescript-nextjs, python-django, go
+- **Self-tests** — validate agents, templates, and project structure
 
 ## Quick Setup
 
 ```bash
-# Clone or download specchain
-git clone https://github.com/nino-chavez/specchain.git
+# Option 1: npx (recommended)
+npx create-specchain /path/to/your/project
 
-# Run setup script
+# Option 2: git clone
+git clone https://github.com/nino-chavez/specchain.git
 cd specchain
 ./setup.sh /path/to/your/project
 ```
 
-Or manually:
-```bash
-cp -r specchain/ /path/to/your/project/
-cp -r .claude/ /path/to/your/project/
-```
-
 ## Quick Example
 
-See [examples/user-profile/](examples/user-profile/) for a complete worked example showing every artifact specchain produces — from raw idea through implementation and verification.
+See [examples/user-profile/](examples/user-profile/) for a complete worked example — from raw idea through implementation and verification, including `progress.yml` and structured implementation reports.
+
+## 5-Minute Walkthrough
+
+Run the unified `/spec` command and walk through each gate:
+
+```
+> /spec Add user profile page with avatar upload
+
+Phase 1 complete: Spec initialized, requirements gathered.
+- Spec folder: specchain/specs/2026-03-15-user-profile/
+- Execution profile: squad + standard
+
+Proceed to spec creation? (y/stop)
+> y
+
+Phase 2 complete: spec.md and tasks.md created.
+Verification: passed (3 consistency checks)
+
+Proceed to implementation? (y/stop)
+> y
+
+Spec Analysis:
+- Tasks: 4 groups, 12 sub-tasks
+- Domains: database, api, frontend (complexity: +9)
+- Cross-cutting: yes (+5)
+- Complexity score: 26
+
+Recommended: squad + standard
+Accept? Or override with flags (e.g., --squad --thorough)
+> y
+
+Task Group 1: Data Models — delegated to database-engineer ... Complete
+Task Group 2: API Endpoints — delegated to api-engineer ... Complete
+Task Group 3: UI Components — delegated to ui-designer ... Complete
+Task Group 4: Test Review — delegated to testing-engineer ... Complete
+
+Verification: backend-verifier passed, frontend-verifier passed
+Final verification: passed
+
+Spec lifecycle complete!
+- Spec: 2026-03-15-user-profile
+- Profile: squad + standard
+- Tasks: 4 groups completed
+- State: Updated
+```
 
 ## Structure
 
 ```
 your-project/
 ├── specchain/
-│   ├── config.yml              # Execution & workflow configuration
-│   ├── STATE.md                # Session memory (auto-updated)
+│   ├── config.yml                 # Execution config (includes specchain_version)
+│   ├── state/                     # Session state (replaces STATE.md)
+│   │   ├── context.yml            # Where you left off, active spec
+│   │   ├── decisions.yml          # Key decisions and rationale
+│   │   ├── blockers.yml           # Active and resolved blockers
+│   │   ├── sessions.yml           # Session history log
+│   │   ├── patterns.yml           # Reusable patterns discovered
+│   │   └── profiles.yml           # Execution profile history
 │   ├── docs/
-│   │   └── execution-profiles.md  # Detailed execution profile reference
+│   │   └── execution-profiles.md
 │   ├── governance/
-│   │   ├── principles.md       # Core governance principles
-│   │   ├── claude-md.tmpl      # CLAUDE.md template
-│   │   └── cursorrules.tmpl    # .cursorrules template
+│   │   ├── principles.md          # Core governance principles
+│   │   ├── claude-md.tmpl         # CLAUDE.md template (envsubst)
+│   │   ├── cursorrules.tmpl       # .cursorrules template (envsubst)
+│   │   └── windsurfrules.tmpl     # .windsurfrules template (envsubst)
 │   ├── product/
-│   │   └── roadmap.md          # Product roadmap
+│   │   └── roadmap.md
 │   ├── roles/
-│   │   ├── implementers.yml    # Implementer agent definitions
-│   │   └── verifiers.yml       # Verifier agent definitions
-│   ├── specs/                  # Feature specs go here
+│   │   ├── implementers.yml
+│   │   └── verifiers.yml
+│   ├── specs/
 │   │   └── [feature-name]/
 │   │       ├── spec.md
 │   │       ├── tasks.md
@@ -59,91 +111,87 @@ your-project/
 │   │       │   ├── initialization.md
 │   │       │   ├── requirements.md
 │   │       │   ├── execution-profile.yml
-│   │       │   └── visuals/
-│   │       ├── implementation/
+│   │       │   └── progress.yml       # Crash recovery tracker
+│   │       ├── implementation/        # Reports with YAML frontmatter
 │   │       └── verification/
-│   └── standards/              # Your coding standards
+│   └── standards/
+│       ├── presets/                    # Tech stack presets
+│       │   ├── generic/
+│       │   ├── python-django/
+│       │   └── go/
 │       ├── backend/
 │       ├── frontend/
 │       ├── global/
 │       └── testing/
 │
-└── .claude/
-    ├── commands/specchain/     # Slash commands
-    │   ├── new-spec.md
-    │   ├── create-spec.md
-    │   └── implement-spec.md
-    └── agents/specchain/       # Agent definitions
-        ├── spec-initializer.md
-        ├── spec-researcher.md
-        ├── tasks-list-creator.md
-        ├── spec-verifier.md
-        ├── implementation-verifier.md
-        └── ...
+├── .claude/
+│   ├── commands/specchain/
+│   │   ├── spec.md                    # Unified lifecycle command
+│   │   ├── new-spec.md
+│   │   ├── create-spec.md
+│   │   ├── implement-spec.md
+│   │   └── plan-product.md
+│   └── agents/specchain/
+│       ├── spec-initializer.md
+│       ├── spec-researcher.md
+│       ├── spec-writer.md
+│       ├── tasks-list-creator.md
+│       ├── spec-verifier.md
+│       ├── implementation-verifier.md
+│       ├── database-engineer.md
+│       ├── api-engineer.md
+│       ├── ui-designer.md
+│       ├── testing-engineer.md
+│       ├── backend-verifier.md
+│       ├── frontend-verifier.md
+│       └── product-planner.md
+│
+├── examples/
+│   └── user-profile/                  # Quickstart worked example
+│
+└── test/
+    ├── validate_agents.sh
+    ├── validate_templates.sh
+    └── validate_structure.sh
 ```
 
-## Usage
+## Commands
 
-### 1. Create a New Spec
+| Command | Description |
+|---------|-------------|
+| `/spec` | **Unified lifecycle** — chains init, create, and implement with gates between each phase |
+| `/new-spec` | Initialize a new spec with requirements gathering |
+| `/create-spec` | Generate spec.md and tasks.md from requirements |
+| `/implement-spec` | Implement a specification with progress tracking |
+| `/plan-product` | Product planning and roadmap |
 
-```
-/new-spec [description]
-/new-spec --solo --lean [description]
-/new-spec --squad --thorough [description]
-```
-
-Initializes a spec folder, gathers requirements through Q&A, and persists the execution profile.
-
-### 2. Generate Spec & Tasks
-
-```
-/create-spec
-/create-spec --thorough
-```
-
-Creates `spec.md` and `tasks.md` from gathered requirements. Runs verification (unless `--lean`).
-
-### 3. Implement a Spec
-
-```
-/implement-spec [spec-folder-name]
-/implement-spec --solo --lean
-/implement-spec --squad --thorough
-```
-
-Workflow:
-1. Loads session state from STATE.md
-2. Resolves execution profile (auto-suggests if enabled)
-3. Plans task assignments (squad) or processes directly (solo)
-4. Delegates implementation
-5. Runs verifications (depth-dependent)
-6. Updates STATE.md with session log and execution profile entry
+All commands validate preconditions before running (e.g., config exists, spec folder present, roles defined).
 
 ## Execution Profiles
 
-Specchain uses two orthogonal axes to control execution behavior:
+Two orthogonal axes control execution behavior:
 
-### Axis 1 — Strategy: `solo` | `squad`
+### Strategy: `solo` | `squad`
 
 | Strategy | Description | Agent Model |
 |----------|-------------|-------------|
-| **solo** | Single agent handles ALL implementation | No agent assignment, no domain verifiers. One agent works through task groups sequentially. |
-| **squad** | Multi-agent delegation to specialists | Current behavior — database-engineer, api-engineer, ui-designer, testing-engineer + domain verifiers. |
+| **solo** | Single agent handles ALL implementation | No agent assignment, no domain verifiers. Mandatory context splitting at threshold. |
+| **squad** | Multi-agent delegation to specialists | database-engineer, api-engineer, ui-designer, testing-engineer + domain verifiers. |
 
-### Axis 2 — Depth: `lean` | `standard` | `thorough`
+### Depth: `lean` | `standard` | `thorough`
 
 | Depth | Spec Creation | Implementation | Verification |
 |-------|--------------|----------------|--------------|
-| **lean** | 3-5 Q&A questions, skip visual analysis | Skip testing-engineer group | Skip domain verifiers, minimal final verification (tests pass + tasks checked) |
-| **standard** | 6-9 questions, full pipeline | Current behavior | Domain verifiers + full final verification |
-| **thorough** | 6-9 questions + architecture/testing questions | TDD Red-Green-Refactor per task, phase checkpoints with user confirmation | Domain verifiers + full suite + coverage + manual verification prompts |
+| **lean** | 3-5 Q&A questions, skip visual analysis | Skip testing-engineer group | Skip domain verifiers, minimal final verification |
+| **standard** | 6-9 questions, full pipeline | Full delegation | Domain verifiers + full final verification |
+| **thorough** | 6-9 questions + architecture/testing | TDD Red-Green-Refactor, phase checkpoints | All verifiers + coverage + manual confirmation |
 
 ### Composition Matrix
 
 | | lean | standard | thorough |
 |---|---|---|---|
 | **solo** | Fastest path. One agent, minimal checks. | Conductor-like. One agent, full spec pipeline. | Max single-agent rigor: TDD, checkpoints at phase boundaries. |
-| **squad** | Fast specialists. Parallel delegation, skip verifiers. | **Current specchain default.** | Full rigor: TDD per agent, phase checkpoints, fresh agents, all verification layers. |
+| **squad** | Fast specialists. Parallel delegation, skip verifiers. | **Default.** Balanced rigor with specialists. | Full rigor: TDD per agent, phase checkpoints, fresh agents, all verification layers. |
 
 ### Common Combos
 
@@ -156,35 +204,84 @@ Specchain uses two orthogonal axes to control execution behavior:
 | Major feature | `--squad --thorough` | Full rigor with specialists, TDD, phase checkpoints |
 | Critical release | `--squad --thorough` | Maximum verification including manual confirmation gates |
 
-## Command Flags
+### Auto-Suggest
 
-All specchain commands support execution profile flags:
+When `auto_suggest: true` and no explicit flags are provided, the system computes a weighted complexity score:
 
-| Flag | Description |
-|------|-------------|
-| `--solo` | Single agent handles all implementation |
-| `--squad` | Multi-agent delegation to specialists |
-| `--lean` | Minimal depth: fewer questions, skip verifiers |
-| `--standard` | Full pipeline (default) |
-| `--thorough` | Maximum rigor: TDD, checkpoints, coverage |
-| `--fresh-agent` | Force fresh agent for next task group |
-| `--context-report` | Display context summary before implementation |
+```
+Complexity = (subtask_count x 1) + (domain_count x 3) + (cross_cutting ? 5 : 0)
+```
 
-### Flag Propagation
+| Score | Recommendation |
+|-------|---------------|
+| <= 10, new code < 30% | `solo` + `lean` |
+| <= 15, single domain | `solo` |
+| 16 - 40 | `squad` + `standard` |
+| > 40 | `squad` + `thorough` |
 
-Flags are resolved in priority order:
+The system always prompts with a scoring breakdown — it never silently decides.
 
-1. **Command flags** (highest) — `/implement-spec --solo --lean`
-2. **Per-spec profile** — `planning/execution-profile.yml` (persisted when `/new-spec` runs)
-3. **Project config** (lowest) — `specchain/config.yml` `execution` section
+## Crash Recovery & Resumption
 
-This means you can set project defaults, override per-spec during `/new-spec`, and override per-invocation with flags.
+Each spec tracks per-group completion in `planning/progress.yml`:
+
+```yaml
+task_groups:
+  - group: "Task Group 1: Data Models"
+    status: complete
+    agent: database-engineer
+    completed_at: "2026-03-15T10:45:00Z"
+  - group: "Task Group 2: API Endpoints"
+    status: failed
+    failure_reason: "agent_crash"
+```
+
+If a session ends unexpectedly, specchain detects existing progress on next run:
+
+```
+Found previous progress for this spec:
+- Task Group 1: Data Models — Complete
+- Task Group 2: API Endpoints — Failed
+
+Resume from Task Group 2? (y/restart/skip-to-N)
+```
+
+You can also resume explicitly: `/implement-spec --resume-from 2`
+
+**Fresh agent failure handling:** If a spawned agent times out (60s), crashes, or returns malformed output, specchain records the failure and offers three options: retry, continue in current context, or stop and resume later.
+
+## Verification & Remediation
+
+Phase 3 runs domain verifiers (squad + standard/thorough). If verifiers report issues, Phase 3.5 kicks in:
+
+1. Issues are grouped by responsible implementer
+2. User approves remediation (or skips/handles manually)
+3. Each issue set is routed back to its implementer with instructions to fix only the listed issues
+4. Failed verification steps are re-run (not full re-verification)
+5. **Capped at 1 remediation cycle** — remaining issues are flagged in the final report
+
+## Session State
+
+Session state lives in `specchain/state/` as structured YAML files:
+
+| File | Contents |
+|------|----------|
+| `context.yml` | Active spec, last completed group, session summary, next steps |
+| `decisions.yml` | Key decisions with date, rationale, and spec reference |
+| `blockers.yml` | Active and resolved blockers with severity |
+| `sessions.yml` | Session history log (pruned to `max_session_logs`) |
+| `patterns.yml` | Reusable patterns discovered during implementation |
+| `profiles.yml` | Execution profile used for each spec |
+
+All state files are auto-updated at the end of each implementation session.
 
 ## Configuration
 
 ### `specchain/config.yml`
 
 ```yaml
+specchain_version: "1.1.0"
+
 project:
   name: "Your Project"
   description: "Project description"
@@ -192,11 +289,12 @@ project:
 execution:
   strategy: squad          # solo | squad
   depth: standard          # lean | standard | thorough
-  auto_suggest: true       # Suggest profile before /implement-spec
+  auto_suggest: true       # Analyze complexity and recommend profile
 
 state_tracking:
   enabled: true
   auto_update: true
+  state_dir: state         # Directory for state files (relative to specchain/)
   max_decisions: 20
   max_resolved_blockers: 10
   max_session_logs: 10
@@ -209,176 +307,123 @@ context_management:
     - thorough
 ```
 
-### Auto-Suggest
+## Command Flags
 
-When `auto_suggest: true` and no explicit flags are provided, `/implement-spec` analyzes the spec and recommends a profile:
+| Flag | Description |
+|------|-------------|
+| `--solo` | Single agent handles all implementation |
+| `--squad` | Multi-agent delegation to specialists |
+| `--lean` | Minimal depth: fewer questions, skip verifiers |
+| `--standard` | Full pipeline (default) |
+| `--thorough` | Maximum rigor: TDD, checkpoints, coverage |
+| `--fresh-agent` | Force fresh agent for next task group |
+| `--context-report` | Display context summary before implementation |
+| `--resume-from <N>` | Resume implementation from task group N |
+| `--no-context-split` | Disable mandatory context splitting (solo) |
+| `--skip-to <phase>` | Skip to `create` or `implement` phase (`/spec` only) |
 
-```
-Spec Analysis: 6 tasks, single domain (API), no frontend components.
-Recommended: solo + lean
-Reason: Small scope, single domain, no UI verification needed.
+### Flag Propagation
 
-Accept? Or override with flags (e.g., --squad --standard)
-```
+Flags are resolved in priority order:
 
-Rules:
-- Tasks <= 8, single domain -> suggest `solo`
-- Tasks > 20 -> suggest `thorough`
-- Spec touches >= 2 domains -> suggest `squad`
-- Infrastructure/config only -> suggest `solo` + `lean`
+1. **Command flags** (highest) — `/spec --solo --lean`
+2. **Per-spec profile** — `planning/execution-profile.yml`
+3. **Project config** (lowest) — `specchain/config.yml`
 
-The system always prompts — it never silently decides.
+## Editor Support
 
-### `specchain/roles/implementers.yml`
+| Editor | File | Source Template |
+|--------|------|----------------|
+| Claude Code | `CLAUDE.md` | `governance/claude-md.tmpl` |
+| Cursor | `.cursorrules` | `governance/cursorrules.tmpl` |
+| Windsurf | `.windsurfrules` | `governance/windsurfrules.tmpl` |
 
-Define specialist agents for your project:
+All templates use `${GOV_VAR}` placeholder syntax and are generated during `./setup.sh`. To regenerate manually:
 
-```yaml
-implementers:
-  - id: database-engineer
-    areas_of_responsibility:
-      - Database migrations
-      - Database models
-    verified_by: backend-verifier
-
-  - id: ui-designer
-    areas_of_responsibility:
-      - UI components
-      - Styling
-    verified_by: frontend-verifier
-```
-
-## Key Concepts
-
-### STATE.md - Session Memory
-
-Maintains context between sessions:
-- **Session Context** - Where you left off
-- **Key Decisions** - Important decisions and rationale
-- **Active Blockers** - Current blockers
-- **Resolved Blockers** - How past blockers were resolved
-- **Execution Profiles** - Strategy/depth used for each spec
-- **Patterns Established** - Reusable patterns discovered
-- **Session Log** - History of work sessions
-
-### Execution Profile File
-
-Each spec has a `planning/execution-profile.yml`:
-
-```yaml
-strategy: squad      # solo | squad
-depth: standard      # lean | standard | thorough
-set_by: new-spec     # which command last set this
-```
-
-### Verification Steps
-
-Each task group includes executable verification:
-
-```markdown
-**Verification Steps:**
-1. Run migration: `npx prisma migrate deploy` - expect success
-2. Run tests: `npm test -- --grep "Model"` - expect 0 failures
-
-**Verification Commands:**
 ```bash
-npx prisma migrate deploy
-npm test -- --grep "Model"
-```
+export GOV_PROJECT_NAME="My Project"
+export GOV_PROJECT_DESCRIPTION="What it does"
+export GOV_LANGUAGE="TypeScript"
+export GOV_FRAMEWORK="Next.js"
+export GOV_CMD_INSTALL="npm install"
+export GOV_CMD_DEV="npm run dev"
+export GOV_CMD_BUILD="npm run build"
+export GOV_CMD_TEST="npm test"
+export GOV_CMD_TYPECHECK="npx tsc --noEmit"
+export GOV_DATE=$(date +%Y-%m-%d)
+
+envsubst < specchain/governance/claude-md.tmpl > CLAUDE.md
+envsubst < specchain/governance/cursorrules.tmpl > .cursorrules
+envsubst < specchain/governance/windsurfrules.tmpl > .windsurfrules
 ```
 
-### Context Advisory
+## Tech Stack Presets
 
-After completing 3+ task groups, displays:
-```
-Context Advisory: 3 task groups completed in this session.
-Consider using fresh agents for remaining tasks.
-```
+Presets provide opinionated coding standards for common stacks. Selected during setup.
 
-## Commands Reference
+| Preset | Includes |
+|--------|----------|
+| `generic` | Language-agnostic coding style, conventions, error handling, testing |
+| `typescript-nextjs` | Default standards in `standards/` (backend, frontend, global, testing) |
+| `python-django` | Django models, DRF API conventions, pytest patterns |
+| `go` | Go idioms, stdlib-first API patterns, table-driven tests |
 
-| Command | Description |
-|---------|-------------|
-| `/new-spec` | Initialize a new spec with requirements gathering |
-| `/create-spec` | Generate spec.md and tasks.md from requirements |
-| `/implement-spec` | Implement a specification |
-| `/plan-product` | Product planning |
+Presets live in `specchain/standards/presets/` and are copied into the active `standards/` directory during setup.
 
 ## Customization
 
 ### Add Custom Standards
 
 Edit files in `specchain/standards/`:
-- `global/tech-stack.md` - Your tech stack
-- `global/coding-style.md` - Coding conventions
-- `frontend/*.md` - Frontend standards
-- `backend/*.md` - Backend standards
+- `global/tech-stack.md` — Your tech stack
+- `global/coding-style.md` — Coding conventions
+- `frontend/*.md` — Frontend standards
+- `backend/*.md` — Backend standards
 
 ### Add Custom Agents
 
-Create agent files in `.claude/agents/specchain/`:
-
-```markdown
----
-name: my-custom-agent
-description: Does custom things
-tools: Write, Read, Bash
----
-
-You are a custom agent...
-```
-
-Register in `specchain/roles/implementers.yml`.
+Create agent files in `.claude/agents/specchain/` and register them in `specchain/roles/implementers.yml`.
 
 ## Governance Templates
 
-SpecChain includes starter templates for project governance files, distilled from the Aegis Constitutional AI Governance Framework.
-
-### What's Included
+Distilled from the Aegis Constitutional AI Governance Framework.
 
 | File | Purpose |
 |------|---------|
-| `specchain/governance/principles.md` | Core governance principles (scope minimization, behavioral contracts, traceability, boundary validation, graceful degradation, observability) |
-| `specchain/governance/claude-md.tmpl` | CLAUDE.md template with `{{PLACEHOLDER}}` markers |
-| `specchain/governance/cursorrules.tmpl` | .cursorrules YAML template with `{{PLACEHOLDER}}` markers |
+| `governance/principles.md` | Core principles: scope minimization, behavioral contracts, traceability, boundary validation, graceful degradation, observability |
+| `governance/claude-md.tmpl` | CLAUDE.md template with `${GOV_VAR}` placeholders |
+| `governance/cursorrules.tmpl` | .cursorrules template with `${GOV_VAR}` placeholders |
+| `governance/windsurfrules.tmpl` | .windsurfrules template with `${GOV_VAR}` placeholders |
 
-### Setup Generation
+## Upgrading
 
-During `./setup.sh`, you'll be prompted to generate `CLAUDE.md` and `.cursorrules` at your project root. The script substitutes your project name, description, language, and framework into the templates.
-
-If you skip generation, the raw templates remain at `specchain/governance/` for manual use.
-
-### Manual Regeneration
-
-To regenerate files after setup, substitute placeholders manually:
+To upgrade an existing specchain installation:
 
 ```bash
-# Regenerate CLAUDE.md
-sed -e 's|{{PROJECT_NAME}}|My Project|g' \
-    -e 's|{{PROJECT_DESCRIPTION}}|What it does|g' \
-    -e 's|{{LANGUAGE}}|TypeScript|g' \
-    -e 's|{{FRAMEWORK}}|Next.js|g' \
-    -e 's|{{CMD_INSTALL}}|npm install|g' \
-    -e 's|{{CMD_DEV}}|npm run dev|g' \
-    -e 's|{{CMD_BUILD}}|npm run build|g' \
-    -e 's|{{CMD_TEST}}|npm test|g' \
-    -e 's|{{CMD_TYPECHECK}}|npx tsc --noEmit|g' \
-    specchain/governance/claude-md.tmpl > CLAUDE.md
-
-# Regenerate .cursorrules
-sed -e 's|{{PROJECT_NAME}}|My Project|g' \
-    -e 's|{{PROJECT_DESCRIPTION}}|What it does|g' \
-    -e 's|{{LANGUAGE}}|TypeScript|g' \
-    -e 's|{{FRAMEWORK}}|Next.js|g' \
-    -e 's|{{CMD_INSTALL}}|npm install|g' \
-    -e 's|{{CMD_DEV}}|npm run dev|g' \
-    -e 's|{{CMD_BUILD}}|npm run build|g' \
-    -e 's|{{CMD_TEST}}|npm test|g' \
-    -e "s|{{DATE}}|$(date +%Y-%m-%d)|g" \
-    specchain/governance/cursorrules.tmpl > .cursorrules
+./setup.sh --upgrade /path/to/your/project
 ```
 
-Then edit the generated files to fill in project-specific sections (domain terminology, architectural decisions, key directories).
+The `--upgrade` flag:
+- Reads `specchain_version` from the existing `config.yml`
+- Compares against the new version
+- Migrates configuration (e.g., STATE.md to `state/` directory)
+- Preserves your custom standards, roles, and governance edits
+- Updates `.specchain-manifest` with the installed version and file checksums
+
+## Self-Tests
+
+Validate your specchain installation:
+
+```bash
+# Verify all agent files are well-formed
+bash test/validate_agents.sh
+
+# Verify governance templates have valid placeholders
+bash test/validate_templates.sh
+
+# Verify project structure matches expected layout
+bash test/validate_structure.sh
+```
 
 ## License
 

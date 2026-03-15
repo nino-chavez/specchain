@@ -1,0 +1,45 @@
+# ${GOV_PROJECT_NAME}
+
+${GOV_DESCRIPTION}
+
+## Tech Stack
+
+- **Language:** ${GOV_LANGUAGE}
+- **Framework:** ${GOV_FRAMEWORK}
+
+## Commands
+
+| Action     | Command              |
+|------------|----------------------|
+| Install    | `${GOV_CMD_INSTALL}` |
+| Dev        | `${GOV_CMD_DEV}`     |
+| Build      | `${GOV_CMD_BUILD}`   |
+| Test       | `${GOV_CMD_TEST}`    |
+| Type Check | `${GOV_CMD_TYPECHECK}` |
+
+## Governance Standards
+
+1. **Scope Minimization** — Prefer the smallest viable change. MVP-Fix > Surgical Refactor > Systemic Change.
+2. **Behavioral Contracts** — Assert observable behavior in tests, not implementation details.
+3. **Traceability** — Document non-obvious decisions with inline rationale. Link specs to requirements.
+4. **Boundary Validation** — Validate at system boundaries (user input, external APIs). Trust internal code.
+5. **Graceful Degradation** — No stack traces in user-facing errors. Provide fallbacks for non-critical failures.
+6. **Observability** — Log at operation boundaries (start, success, failure). Prefer structured logging.
+
+## File Layout
+
+| Directory | Purpose |
+|-----------|---------|
+| `src/` | Application source code |
+| `tests/` | Test suites |
+| `specchain/` | Spec-driven workflow system |
+| `specchain/specs/` | Feature specifications |
+| `specchain/standards/` | Coding standards |
+
+## Rules
+
+- Do NOT commit secrets, API keys, or credentials
+- Do NOT disable linting rules without documented justification
+- Do NOT add dependencies without checking for existing alternatives
+- Do NOT modify generated files (migrations, lockfiles) by hand
+- Refer to `specchain/standards/` for detailed coding conventions

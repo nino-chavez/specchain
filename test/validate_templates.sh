@@ -14,6 +14,7 @@ echo ""
 TEMPLATES=(
     "$PROJECT_DIR/specchain/governance/claude-md.tmpl"
     "$PROJECT_DIR/specchain/governance/cursorrules.tmpl"
+    "$PROJECT_DIR/specchain/governance/windsurfrules.tmpl"
 )
 
 SETUP="$PROJECT_DIR/setup.sh"

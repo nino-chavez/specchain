@@ -1,0 +1,4 @@
+.git/
+test/
+.claude/settings.local.json
+.specchain-manifest

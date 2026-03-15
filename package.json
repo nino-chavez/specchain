@@ -1,0 +1,35 @@
+{
+  "name": "create-specchain",
+  "version": "1.1.0",
+  "description": "Spec-driven development workflow for AI-assisted coding",
+  "bin": {
+    "create-specchain": "./setup.sh"
+  },
+  "keywords": [
+    "claude-code",
+    "ai-coding",
+    "specification",
+    "workflow",
+    "development",
+    "cursor",
+    "windsurf"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nino-chavez/specchain.git"
+  },
+  "author": "Nino Chavez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nino-chavez/specchain/issues"
+  },
+  "homepage": "https://github.com/nino-chavez/specchain#readme",
+  "files": [
+    "setup.sh",
+    "specchain/",
+    ".claude/",
+    "examples/",
+    "LICENSE",
+    "README.md"
+  ]
+}
