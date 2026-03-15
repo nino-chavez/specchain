@@ -27,6 +27,12 @@
 
 ---
 
+## Execution Profiles
+| Spec | Strategy | Depth | Date |
+|------|----------|-------|------|
+
+---
+
 ## Patterns Established
 - [Pattern discovered during implementation]
 

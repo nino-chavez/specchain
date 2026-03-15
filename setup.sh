@@ -105,6 +105,60 @@ cp -r "$SCRIPT_DIR/.claude/agents/specchain" "$TARGET_DIR/.claude/agents/"
 mkdir -p "$TARGET_DIR/specchain/specs"
 
 echo ""
+
+# --- Governance Templates ---
+echo ""
+echo -e "${BLUE}Governance Templates${NC}"
+read -p "Generate CLAUDE.md and .cursorrules for this project? (y/n) " -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    read -p "Project name: " GOV_PROJECT_NAME
+    read -p "One-line description: " GOV_DESCRIPTION
+    read -p "Language (e.g. TypeScript): " GOV_LANGUAGE
+    read -p "Framework (e.g. Next.js): " GOV_FRAMEWORK
+
+    # Default commands based on common patterns
+    GOV_CMD_INSTALL="npm install"
+    GOV_CMD_DEV="npm run dev"
+    GOV_CMD_BUILD="npm run build"
+    GOV_CMD_TEST="npm test"
+    GOV_CMD_TYPECHECK="npx tsc --noEmit"
+    GOV_DATE="$(date +%Y-%m-%d)"
+
+    # Generate CLAUDE.md
+    echo "Generating CLAUDE.md..."
+    sed -e "s|{{PROJECT_NAME}}|${GOV_PROJECT_NAME}|g" \
+        -e "s|{{PROJECT_DESCRIPTION}}|${GOV_DESCRIPTION}|g" \
+        -e "s|{{LANGUAGE}}|${GOV_LANGUAGE}|g" \
+        -e "s|{{FRAMEWORK}}|${GOV_FRAMEWORK}|g" \
+        -e "s|{{CMD_INSTALL}}|${GOV_CMD_INSTALL}|g" \
+        -e "s|{{CMD_DEV}}|${GOV_CMD_DEV}|g" \
+        -e "s|{{CMD_BUILD}}|${GOV_CMD_BUILD}|g" \
+        -e "s|{{CMD_TEST}}|${GOV_CMD_TEST}|g" \
+        -e "s|{{CMD_TYPECHECK}}|${GOV_CMD_TYPECHECK}|g" \
+        "$TARGET_DIR/specchain/governance/claude-md.tmpl" > "$TARGET_DIR/CLAUDE.md"
+
+    # Generate .cursorrules
+    echo "Generating .cursorrules..."
+    sed -e "s|{{PROJECT_NAME}}|${GOV_PROJECT_NAME}|g" \
+        -e "s|{{PROJECT_DESCRIPTION}}|${GOV_DESCRIPTION}|g" \
+        -e "s|{{LANGUAGE}}|${GOV_LANGUAGE}|g" \
+        -e "s|{{FRAMEWORK}}|${GOV_FRAMEWORK}|g" \
+        -e "s|{{CMD_INSTALL}}|${GOV_CMD_INSTALL}|g" \
+        -e "s|{{CMD_DEV}}|${GOV_CMD_DEV}|g" \
+        -e "s|{{CMD_BUILD}}|${GOV_CMD_BUILD}|g" \
+        -e "s|{{CMD_TEST}}|${GOV_CMD_TEST}|g" \
+        -e "s|{{CMD_TYPECHECK}}|${GOV_CMD_TYPECHECK}|g" \
+        -e "s|{{DATE}}|${GOV_DATE}|g" \
+        "$TARGET_DIR/specchain/governance/cursorrules.tmpl" > "$TARGET_DIR/.cursorrules"
+
+    echo -e "${GREEN}Generated CLAUDE.md and .cursorrules${NC}"
+else
+    echo -e "Skipped. Raw templates available at:"
+    echo "  ${YELLOW}specchain/governance/claude-md.tmpl${NC}"
+    echo "  ${YELLOW}specchain/governance/cursorrules.tmpl${NC}"
+fi
+
+echo ""
 echo -e "${GREEN}Specchain installed successfully!${NC}"
 echo ""
 echo -e "${BLUE}Next steps:${NC}"
@@ -119,10 +173,11 @@ echo "  3. Define your agents:"
 echo "     ${YELLOW}Edit specchain/roles/implementers.yml${NC}"
 echo ""
 echo "  4. Create your first spec:"
-echo "     ${YELLOW}/create-spec${NC}"
+echo "     ${YELLOW}/new-spec [description]${NC}"
 echo ""
 echo -e "${BLUE}Available commands:${NC}"
-echo "  /create-spec     - Create a new feature specification"
+echo "  /new-spec        - Initialize a new spec with requirements gathering"
+echo "  /create-spec     - Generate spec.md and tasks.md from requirements"
 echo "  /implement-spec  - Implement a specification"
 echo "  /plan-product    - Plan product roadmap"
 echo ""
