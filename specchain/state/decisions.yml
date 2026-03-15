@@ -1,0 +1,9 @@
+# Key Decisions Log
+# Loaded on demand by agents needing historical context
+max_entries: 20
+decisions: []
+# Example entry:
+#   - date: "2026-03-15"
+#     decision: "Used Prisma cascading deletes for user profile cleanup"
+#     rationale: "Matches existing pattern in project model"
+#     spec: "2026-03-15-user-profile"

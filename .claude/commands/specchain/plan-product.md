@@ -9,6 +9,13 @@ You are helping to plan and document the mission, roadmap and tech stack for the
 
 This process will create these files in `specchain/product/` directory.
 
+## Preconditions
+
+Before starting, verify:
+1. `specchain/config.yml` exists — if not, display: "Specchain not installed in this project. Run `./setup.sh /path/to/project` first." and STOP.
+
+If precondition fails, do not proceed.
+
 ### PHASE 1: Gather Product Requirements
 
 Use the **product-planner** subagent to create comprehensive product documentation.

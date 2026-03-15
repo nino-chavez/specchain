@@ -1,0 +1,15 @@
+# Blockers Tracker
+# Loaded on demand during implementation phases
+active: []
+# Example:
+#   - title: "Missing API key"
+#     description: "Need Stripe API key for payment integration"
+#     spec: "2026-03-15-payments"
+#     task: "2.3"
+
+resolved: []
+# Example:
+#   - title: "Missing API key"
+#     date_resolved: "2026-03-15"
+#     resolution: "Added to .env via team lead"
+max_resolved: 10

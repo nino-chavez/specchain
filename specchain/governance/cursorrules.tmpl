@@ -1,6 +1,6 @@
-project: "{{PROJECT_NAME}}"
-description: "{{PROJECT_DESCRIPTION}}"
-updated: "{{DATE}}"
+project: "${GOV_PROJECT_NAME}"
+description: "${GOV_DESCRIPTION}"
+updated: "${GOV_DATE}"
 
 standards:
   - description: "Scope minimization"
@@ -29,15 +29,15 @@ file_layout:
   standards: "specchain/standards/"
   config: "specchain/config.yml"
 
-language: "{{LANGUAGE}}"
-framework: "{{FRAMEWORK}}"
+language: "${GOV_LANGUAGE}"
+framework: "${GOV_FRAMEWORK}"
 
 commands:
-  install: "{{CMD_INSTALL}}"
-  dev: "{{CMD_DEV}}"
-  build: "{{CMD_BUILD}}"
-  test: "{{CMD_TEST}}"
-  typecheck: "{{CMD_TYPECHECK}}"
+  install: "${GOV_CMD_INSTALL}"
+  dev: "${GOV_CMD_DEV}"
+  build: "${GOV_CMD_BUILD}"
+  test: "${GOV_CMD_TEST}"
+  typecheck: "${GOV_CMD_TYPECHECK}"
 
 deny:
   - "Do not commit secrets, API keys, or credentials"

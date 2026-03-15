@@ -1,0 +1,6 @@
+# Established Patterns
+# Loaded on demand — reusable patterns discovered during implementation
+patterns: []
+# Example:
+#   - "Used Prisma cascading deletes — matches Project model pattern"
+#   - "Toast notifications via shadcn/ui Sonner component"

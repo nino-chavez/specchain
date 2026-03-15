@@ -107,18 +107,18 @@ Please complete these manual checks and confirm. (y/done/skip)
 Record the user's response (confirmed, skipped, or specific findings) in the final verification report.
 
 
-### Step 6: Update STATE.md
+### Step 6: Update State Files
 
-Update `specchain/STATE.md` to reflect the completion of this spec's implementation:
+Update the structured state files in `specchain/state/` to reflect the completion of this spec's implementation:
 
-1. **Move Resolved Blockers**:
-   - Check the Active Blockers section for any blockers related to this spec
-   - If any blockers were resolved during implementation, move them from Active Blockers to the Resolved Blockers table
+1. **Update `specchain/state/blockers.yml`**:
+   - Check the `active` list for any blockers related to this spec
+   - If any blockers were resolved during implementation, move them from `active` to `resolved` list
    - Include the resolution date and how the blocker was resolved
 
-2. **Add Discovered Patterns**:
+2. **Update `specchain/state/patterns.yml`**:
    - Review the implementation reports in `specchain/specs/[this-spec]/implementation/`
-   - If any new patterns were established or discovered during implementation, add them to the Patterns Established section
+   - If any new patterns were established or discovered during implementation, append them to the `patterns` list
    - Examples of patterns to capture:
      - Reusable code patterns that emerged
      - Architectural decisions that should be followed in future specs
@@ -235,13 +235,13 @@ The content of this report should follow this structure:
 
 ---
 
-## 6. STATE.md Updates
+## 6. State Updates
 
 **Status:** Updated | No Updates Needed
 
-### Resolved Blockers Moved
-[List any blockers that were moved from Active to Resolved, or note "None"]
+### Resolved Blockers Moved (state/blockers.yml)
+[List any blockers that were moved from active to resolved, or note "None"]
 
-### Patterns Added
-[List any new patterns added to Patterns Established section, or note "None"]
+### Patterns Added (state/patterns.yml)
+[List any new patterns added to patterns list, or note "None"]
 ```

@@ -1,0 +1,8 @@
+# Execution Profile History
+# Tracks which profiles were used for each spec
+entries: []
+# Example:
+#   - spec: "2026-03-15-user-profile"
+#     strategy: squad
+#     depth: standard
+#     date: "2026-03-15"

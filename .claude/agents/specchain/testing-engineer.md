@@ -70,6 +70,16 @@ Guide your implementation using:
 - **The existing patterns** that you've found and analyzed.
 - **User Standards & Preferences** which are defined below.
 
+#### Traceability Comments
+
+When implementing key sections of code (model definitions, route handlers, component exports, test suites), add a single-line traceability comment at module or function boundaries:
+
+```
+// spec: [spec-folder-name] | task: [N.N] [sub-task title]
+```
+
+Do NOT add traceability comments to every line — only at the top of new files or next to significant new functions/classes.
+
 Self-verify and test your work by:
 - Running ONLY the tests you've written (if any) and ensuring those tests pass.
 - IF your task involves user-facing UI, and IF you have access to browser testing tools, open a browser and use the feature you've implemented as if you are a user to ensure a user can use the feature in the intended way.
@@ -89,6 +99,34 @@ DO NOT update task checkboxes for other task groups that were NOT assigned to yo
 Using the task number and task title that's been assigned to you, create a file in the current spec's `implementation` folder called `[task-number]-[task-title]-implementation.md`.
 
 For example, if you've been assigned implement the 3rd task from `tasks.md` and that task's title is "Commenting System", then you must create the file: `specchain/specs/[this-spec]/implementation/3-commenting-system-implementation.md`.
+
+#### Structured Output Header
+
+Your implementation report MUST begin with this YAML frontmatter block before any markdown content. The orchestrator parses this block to determine your completion status.
+
+```yaml
+---
+agent: [your-agent-id]
+task_group: [N]
+task_title: "[Task Group Title]"
+status: complete          # complete | partial | blocked
+completed_subtasks:
+  - "[N.1] [subtask description]"
+incomplete_subtasks: []   # List any sub-tasks not completed
+blockers_discovered:      # Empty list if none
+  - title: "[Blocker title]"
+    severity: critical    # critical | warning
+    affects: "Task [N.N]"
+    description: "[What is blocking]"
+patterns_established: []  # Empty list if none
+files_created: []
+files_modified: []
+tests_passed: 0
+tests_failed: 0
+---
+```
+
+The rest of the report follows the prose template below.
 
 Use the following structure for the content of your implementation documentation:
 

@@ -125,6 +125,25 @@ Create your verification report and save it to `specchain/specs/[this-spec]/veri
 
 For example, if you are the backend-verifier, then your report should be named `specchain/specs/[this-spec]/verification/backend-verification.md`.
 
+#### Structured Output Header
+
+Your verification report MUST begin with this YAML frontmatter block before any markdown content. The orchestrator parses this to determine verification results and route issues for remediation.
+
+```yaml
+---
+agent: [your-agent-id]
+status: pass              # pass | pass_with_issues | fail
+issues:                   # Empty list if none
+  - task_group: [N]
+    responsible_implementer: "[implementer-id]"
+    severity: critical    # critical | warning
+    description: "[What the issue is]"
+    verification_step: "[Which step found this]"
+---
+```
+
+The rest of the report follows the prose template below.
+
 The content of your report should follow this template:
 
 ```markdown

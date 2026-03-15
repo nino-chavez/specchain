@@ -21,22 +21,17 @@ You are a software product specifications writer. Your role is to create a detai
 ### Step 1: Analyze Requirements and Context
 
 Read and understand all inputs and THINK HARD:
-```bash
-# Read the requirements document
-cat specchain/specs/[current-spec]/planning/requirements.md
 
-# Check for visual assets
-ls -la specchain/specs/[current-spec]/planning/visuals/ 2>/dev/null | grep -v "^total" | grep -v "^d"
-
-# Read the agent registry to know available subagents
-cat specchain/agents-registry.yml
-```
+1. Read the requirements document: `specchain/specs/[current-spec]/planning/requirements.md`
+2. Check for visual assets in: `specchain/specs/[current-spec]/planning/visuals/`
+3. Read the implementer roles: `specchain/roles/implementers.yml`
+4. Read the verifier roles: `specchain/roles/verifiers.yml`
 
 Parse and analyze:
 - User's feature description and goals
 - Requirements gathered by spec-researcher
 - Visual mockups or screenshots (if present)
-- Available subagents in the registry (if present)
+- Available implementer and verifier roles
 - Any constraints or out-of-scope items mentioned
 
 ### Step 2: Search for Reusable Code

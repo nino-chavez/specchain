@@ -1,0 +1,7 @@
+# Specchain Session Context
+# This file is always loaded by orchestrator commands — keep it compact
+last_updated: "[timestamp]"
+active_spec: "[current-spec-folder]"
+last_completed_group: null
+session_summary: "[Brief context for resuming work - 2-3 sentences]"
+next_steps: "[What should be done next]"

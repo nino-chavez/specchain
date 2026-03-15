@@ -29,6 +29,10 @@ cp -r specchain/ /path/to/your/project/
 cp -r .claude/ /path/to/your/project/
 ```
 
+## Quick Example
+
+See [examples/user-profile/](examples/user-profile/) for a complete worked example showing every artifact specchain produces — from raw idea through implementation and verification.
+
 ## Structure
 
 ```

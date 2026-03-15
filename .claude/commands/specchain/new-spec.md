@@ -10,6 +10,14 @@ PHASE 3. Inform the user that the spec has been initialized
 
 Follow each of these phases and their individual workflows IN SEQUENCE:
 
+## Preconditions
+
+Before starting, verify these prerequisites exist:
+1. `specchain/config.yml` exists — if not, display: "Specchain not installed in this project. Run `./setup.sh /path/to/project` first." and STOP.
+2. `specchain/standards/global/tech-stack.md` exists — if not, display: "Standards not configured. Edit `specchain/standards/global/tech-stack.md` with your tech stack." and STOP.
+
+If any precondition fails, do not proceed with any phase.
+
 ## Command Flags
 
 This command supports the following optional flags:

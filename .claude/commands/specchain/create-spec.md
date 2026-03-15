@@ -12,6 +12,15 @@ PHASE 4. Display the results to user
 
 Follow each of these phases and their individual workflows IN SEQUENCE:
 
+## Preconditions
+
+Before starting, verify these prerequisites exist:
+1. At least one spec folder exists in `specchain/specs/` — if not, display: "No specs found. Run `/new-spec` first to initialize a spec." and STOP.
+2. The most recent spec folder has `planning/requirements.md` — if not, display: "Requirements not gathered for [spec-name]. Run `/new-spec` to complete requirements research." and STOP.
+3. The most recent spec folder does NOT already have `spec.md` — if it does, display: "Spec already created for [spec-name]. Run `/implement-spec` to implement it, or `/new-spec` to start a new feature." and STOP.
+
+If any precondition fails, do not proceed with any phase.
+
 ## Command Flags
 
 This command supports the following optional flags that **override** the persisted execution profile:

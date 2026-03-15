@@ -1,6 +1,8 @@
 # Specchain Configuration
 # Customize these settings for your project
 
+specchain_version: "1.1.0"   # Used by setup.sh for upgrade detection
+
 project:
   name: "My Project"
   description: "Project description"
@@ -32,9 +34,11 @@ execution:
 # The `workflow` section and `default_mode` are deprecated and no longer used.
 
 # State Tracking Configuration
+# State is stored in specchain/state/ directory as individual YAML files
 state_tracking:
   enabled: true
   auto_update: true
+  state_dir: state             # Directory for state files (relative to specchain/)
   max_decisions: 20
   max_resolved_blockers: 10
   max_session_logs: 10
