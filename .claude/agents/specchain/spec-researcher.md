@@ -63,20 +63,28 @@ This context will help you:
 
 Generate targeted, NUMBERED questions based on the execution **depth**:
 
+**At every depth level, the first 2 questions MUST be these value-first questions (prepended before all other questions):**
+
+1. **"What's the Proof of Life?"** — Ask: "Describe the single smallest thing a user can do end-to-end that proves this feature works. Not infrastructure, not types — an actual user action with a visible result."
+2. **"How will you know it's valuable?"** — Ask: "What user behavior or outcome would confirm this was worth building? Be specific — not 'tests pass' but 'user can X and sees Y'."
+
+These two questions are **mandatory at all depths**. For `lean` (3-5 questions total), they count toward the total. For `standard` and `thorough` (6-9 questions), they are in addition to the functional questions.
+
 #### Depth: `lean`
-- Generate **3-5** targeted questions focused on **functional requirements only**
+- Generate **3-5** targeted questions total (including the 2 value-first questions above)
+- The remaining 1-3 questions focus on **functional requirements only**
 - **SKIP** the visual asset request entirely
 - **SKIP** the reusability question entirely
 - Keep questions direct and minimal — confirm core behaviors and scope boundaries
 
 #### Depth: `standard`
-- Generate **6-9** targeted questions
+- Generate **6-9** targeted questions (in addition to the 2 value-first questions)
 - **INCLUDE** the visual asset request at the end
 - **INCLUDE** the reusability question at the end
 - This is the current default behavior (see format below)
 
 #### Depth: `thorough`
-- Generate **6-9** targeted questions (same as standard)
+- Generate **6-9** targeted questions (in addition to the 2 value-first questions, same as standard)
 - **INCLUDE** the visual asset request at the end
 - **INCLUDE** the reusability question at the end
 - **ADD 1-2 additional questions** about:
@@ -96,13 +104,26 @@ For user-facing features, fold 1-2 of the following into your 6-9 question count
 - Include specific suggestions they can say yes/no to
 - Always end with an open question about exclusions
 
+**Codebase-first rule:**
+Before adding a question to the list, check whether the answer is already discoverable in the codebase. If you can answer it from existing code, conventions, or schema — answer it yourself in the requirements doc and skip the question. The user's time is for decisions only code can't answer.
+
+Examples of questions that should usually be answered by reading code, not asking:
+- "Should this use the existing User model or a new one?" → grep for the model
+- "What's the auth pattern in this app?" → read `lib/auth/` or `middleware.ts`
+- "Does this tech stack use X or Y?" → check `package.json` / `Cargo.toml` / `go.mod`
+- "Where do similar features live?" → run the reusability search yourself
+
+Asking questions whose answers are in the code burns user trust. Only ask when the user must make a judgment call.
+
 **Required output format for `standard` and `thorough`:**
 ```
 Based on your idea for [spec name], I have some clarifying questions:
 
-1. I assume [specific assumption]. Is that correct, or [alternative]?
-2. I'm thinking [specific approach]. Should we [alternative]?
-3. [Continue with numbered questions...]
+1. **Proof of Life:** Describe the single smallest thing a user can do end-to-end that proves this feature works. Not infrastructure, not types — an actual user action with a visible result.
+2. **Value Signal:** What user behavior or outcome would confirm this was worth building? Be specific — not "tests pass" but "user can X and sees Y."
+3. I assume [specific assumption]. Is that correct, or [alternative]?
+4. I'm thinking [specific approach]. Should we [alternative]?
+5. [Continue with numbered questions...]
 [Last numbered question about exclusions]
 
 **Existing Code Reuse:**
@@ -133,9 +154,9 @@ Please answer the questions above and let me know if you've added any visual fil
 ```
 Based on your idea for [spec name], I have a few focused questions:
 
-1. [Core functional requirement question]
-2. [Scope/boundary question]
-3. [Key technical constraint question]
+1. **Proof of Life:** Describe the single smallest thing a user can do end-to-end that proves this feature works. Not infrastructure, not types — an actual user action with a visible result.
+2. **Value Signal:** What user behavior or outcome would confirm this was worth building? Be specific — not "tests pass" but "user can X and sees Y."
+3. [Core functional requirement question]
 [3-5 questions total, last one about exclusions]
 
 Please answer these questions so we can proceed.

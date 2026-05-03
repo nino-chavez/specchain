@@ -40,6 +40,17 @@ Read the file `specchain/roles/implementers.yml`.
 
 The structure of the tasks list depends on the **strategy**:
 
+#### Classify each task group as HITL or AFK
+
+Regardless of strategy, every task group MUST be tagged as either:
+
+- **AFK** — An implementer agent can complete this task group unattended and merge it. No human judgment is required between starting and finishing.
+- **HITL** — Requires human-in-the-loop interaction. Examples: an architectural decision the spec doesn't cover, a design review of generated UI against mockups, a credential the agent can't obtain, a stakeholder approval gate.
+
+Add `**Type:** AFK` or `**Type:** HITL` as the second line of each task group, after `**Assigned implementer:**`. For HITL groups, add a `**HITL reason:**` line explaining what blocks unattended completion.
+
+**Prefer AFK where possible.** Re-examine each HITL classification: would adding more detail to the spec or visual assets convert it to AFK? If yes, recommend that conversion in the implementation report. Genuine HITL tasks (true judgment calls) stay HITL; everything else gets sharpened until it can run unattended.
+
 #### `squad` strategy (default — current behavior)
 
 Group tasks by **domain layer** (Database, API, Frontend, Testing). Assign each group to a specialist implementer from implementers.yml.
@@ -63,6 +74,7 @@ Assigned roles: [list from registry]
 
 #### Task Group 1: Data Models and Migrations
 **Assigned implementer:** database-engineer
+**Type:** AFK
 **Dependencies:** None
 
 - [ ] 1.0 Complete database layer
@@ -112,6 +124,7 @@ npx prisma db pull --print
 
 #### Task Group 2: API Endpoints
 **Assigned implementer:** api-engineer
+**Type:** AFK
 **Dependencies:** Task Group 1
 
 - [ ] 2.0 Complete API layer
@@ -167,6 +180,8 @@ npm test -- --grep "API"
 
 #### Task Group 3: UI Design
 **Assigned implementer:** ui-designer
+**Type:** HITL
+**HITL reason:** Final visual design review against mockups (`planning/visuals/`) — agent assembles candidates, human picks the variant that best matches intent.
 **Dependencies:** Task Group 2
 
 - [ ] 3.0 Complete UI components
@@ -233,6 +248,7 @@ npx playwright test --project=chromium --grep "visual"
 
 #### Task Group 4: Test Review & Gap Analysis
 **Assigned implementer:** testing-engineer
+**Type:** AFK
 **Dependencies:** Task Groups 1-3
 
 - [ ] 4.0 Review existing tests and fill critical gaps only
@@ -315,6 +331,7 @@ Depth: [depth]
 
 #### Task Group 1: [Feature Slice Name, e.g., "User Registration Flow"]
 **Assigned implementer:** solo
+**Type:** AFK
 **Dependencies:** None
 
 - [ ] 1.0 Complete [feature slice]
@@ -337,6 +354,7 @@ Depth: [depth]
 
 #### Task Group 2: [Next Feature Slice]
 **Assigned implementer:** solo
+**Type:** AFK
 **Dependencies:** Task Group 1
 [...]
 ```
@@ -365,6 +383,7 @@ After structuring the task groups (squad or solo), apply these depth-specific mo
 
 ## Important Constraints
 
+- **Group 1 must deliver the Proof of Life scenario.** Read the spec's "Proof of Life" section. The first implementation group (after any bootstrap group) must produce the minimum end-to-end user experience defined there. Infrastructure, abstractions, and supporting modules that aren't required for the Proof of Life go in later groups. If the Proof of Life says "user can create an item and see it in a list," then Group 1 must deliver exactly that — not a data model alone, not types alone, but the full vertical slice.
 - **Read execution profile first** — strategy and depth drive the entire task structure
 - **`squad` mode**: Base implementer assignments on available implementers in implementers.yml
 - **`solo` mode**: Set ALL assigned_implementer values to `solo`. Group by feature slice, not domain layer.
